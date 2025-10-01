@@ -1,0 +1,324 @@
+---
+globs: "*Store.ts,*store.ts,src/store/**"
+description: "Zustand 상태 관리 관련 규칙"
+---
+
+# Zustand 상태 관리 규칙
+
+## 스토어 구조
+
+### 기본 스토어 패턴
+
+[quizStore.ts](mdc:src/store/quizStore.ts)를 참고하여 일관된 구조로 작성합니다.
+
+```typescript
+import { create } from 'zustand'
+import { devtools, persist } from 'zustand/middleware'
+
+interface IMyStore {
+  // 상태
+  data: SomeData[]
+  isLoading: boolean
+  error: Error | null
+  
+  // 액션 (상태를 변경하는 함수)
+  fetchData: () => Promise<void>
+  updateData: (id: string, updates: Partial<SomeData>) => void
+  reset: () => void
+  
+  // 셀렉터 (파생 상태를 계산하는 함수)
+  getItemById: (id: string) => SomeData | null
+}
+
+export const useMyStore = create<IMyStore>()(
+  devtools(
+    persist(
+      (set, get) => ({
+        // 초기 상태
+        data: [],
+        isLoading: false,
+        error: null,
+        
+        // 액션 구현
+        fetchData: async () => {
+          set({ isLoading: true, error: null })
+          try {
+            const data = await api.fetchData()
+            set({ data, isLoading: false })
+          } catch (error) {
+            set({ error: error as Error, isLoading: false })
+          }
+        },
+        
+        updateData: (id, updates) => {
+          set(state => ({
+            data: state.data.map(item =>
+              item.id === id ? { ...item, ...updates } : item
+            )
+          }))
+        },
+        
+        reset: () => {
+          set({ data: [], isLoading: false, error: null })
+        },
+        
+        // 셀렉터 구현
+        getItemById: (id) => {
+          return get().data.find(item => item.id === id) ?? null
+        }
+      }),
+      {
+        name: 'my-store-storage',  // 로컬 스토리지 키
+        partialize: (state) => ({
+          // 저장할 상태만 선택
+          data: state.data
+          // isLoading, error는 저장하지 않음
+        })
+      }
+    ),
+    { name: 'my-store' }  // Redux DevTools에 표시될 이름
+  )
+)
+```
+
+## 상태 업데이트 패턴
+
+### Immer 스타일 (불변성 유지)
+
+```typescript
+// ✅ 불변성을 유지하는 업데이트
+updateAnswer: (questionId: string, optionId: string) => {
+  set(state => ({
+    answers: state.answers.map(answer =>
+      answer.questionId === questionId
+        ? { ...answer, optionId }
+        : answer
+    )
+  }))
+}
+
+// ✅ 배열에 항목 추가
+addAnswer: (answer: IAnswer) => {
+  set(state => ({
+    answers: [...state.answers, answer]
+  }))
+}
+
+// ✅ 배열에서 항목 제거
+removeAnswer: (questionId: string) => {
+  set(state => ({
+    answers: state.answers.filter(a => a.questionId !== questionId)
+  }))
+}
+```
+
+### 함수형 업데이트
+
+```typescript
+// ✅ 이전 상태를 기반으로 업데이트
+incrementScore: () => {
+  set(state => ({
+    score: state.score + 1
+  }))
+}
+
+// ✅ 여러 상태를 동시에 업데이트
+completeQuiz: () => {
+  set(state => ({
+    isCompleted: true,
+    endTime: new Date(),
+    score: calculateFinalScore(state.answers)
+  }))
+}
+```
+
+## 셀렉터 사용
+
+### 컴포넌트에서 상태 사용
+
+```typescript
+// ✅ 필요한 상태만 구독
+export function QuizProgress() {
+  const progress = useQuizStore(state => state.progress)
+  const percentage = useQuizStore(state => state.progress.percentage)
+  
+  return <ProgressBar value={percentage} />
+}
+
+// ❌ 전체 상태 구독 (불필요한 리렌더링)
+export function QuizProgress() {
+  const store = useQuizStore()  // 모든 상태 변경에 리렌더링
+  
+  return <ProgressBar value={store.progress.percentage} />
+}
+```
+
+### 여러 상태 값 구독
+
+```typescript
+// ✅ 얕은 비교를 위한 shallow 사용
+import { shallow } from 'zustand/shallow'
+
+export function QuizControls() {
+  const { canGoNext, canGoPrevious, nextQuestion, previousQuestion } = 
+    useQuizStore(
+      state => ({
+        canGoNext: state.canGoNext(),
+        canGoPrevious: state.canGoPrevious(),
+        nextQuestion: state.nextQuestion,
+        previousQuestion: state.previousQuestion
+      }),
+      shallow
+    )
+  
+  return (
+    <div>
+      <button disabled={!canGoPrevious} onClick={previousQuestion}>이전</button>
+      <button disabled={!canGoNext} onClick={nextQuestion}>다음</button>
+    </div>
+  )
+}
+```
+
+## 비동기 액션
+
+### 비동기 작업 처리
+
+```typescript
+// ✅ 비동기 액션 패턴
+interface IDataStore {
+  data: Data[]
+  isLoading: boolean
+  error: Error | null
+  
+  fetchData: () => Promise<void>
+}
+
+export const useDataStore = create<IDataStore>((set, get) => ({
+  data: [],
+  isLoading: false,
+  error: null,
+  
+  fetchData: async () => {
+    // 로딩 시작
+    set({ isLoading: true, error: null })
+    
+    try {
+      const response = await fetch('/api/data')
+      const data = await response.json()
+      
+      // 성공
+      set({ data, isLoading: false })
+    } catch (error) {
+      // 실패
+      set({ error: error as Error, isLoading: false })
+    }
+  }
+}))
+```
+
+## Persist 미들웨어
+
+### 로컬 스토리지 저장
+
+```typescript
+// ✅ 선택적 상태 저장
+export const useQuizStore = create<QuizStore>()(
+  persist(
+    (set, get) => ({
+      // ... 스토어 구현
+    }),
+    {
+      name: 'quiz-storage',
+      partialize: (state) => ({
+        // 저장할 상태만 선택
+        result: state.result,
+        profile: state.profile,
+        quizState: {
+          answers: state.quizState.answers,
+          isCompleted: state.quizState.isCompleted
+        }
+        // currentQuestionIndex 등 UI 상태는 제외
+      }),
+      version: 1,  // 버전 관리
+      migrate: (persistedState: any, version: number) => {
+        // 버전 마이그레이션 로직
+        if (version === 0) {
+          // v0 -> v1 마이그레이션
+          return {
+            ...persistedState,
+            newField: 'default'
+          }
+        }
+        return persistedState
+      }
+    }
+  )
+)
+```
+
+## DevTools 활용
+
+### 액션 이름 지정
+
+```typescript
+// ✅ 의미 있는 액션 이름
+startQuiz: () => {
+  set({ quizState: initialQuizState }, false, 'quiz/start')
+}
+
+answerQuestion: (answer: IAnswer) => {
+  set(
+    state => ({ answers: [...state.answers, answer] }),
+    false,
+    { type: 'quiz/answer', answer }
+  )
+}
+```
+
+## 스토어 분리 원칙
+
+### 단일 책임 원칙
+
+각 스토어는 하나의 도메인만 관리합니다.
+
+```typescript
+// ✅ 도메인별 스토어 분리
+useQuizStore    // 퀴즈 진행 상태
+useResultStore  // 결과 데이터
+useUIStore      // UI 상태 (테마, 모달 등)
+useAuthStore    // 인증 상태
+
+// ❌ 모든 상태를 하나의 스토어에
+useAppStore     // 너무 많은 책임
+```
+
+## 타입 안전성
+
+### 액션 타입 정의
+
+```typescript
+// ✅ 명확한 타입 정의
+interface QuizActions {
+  startQuiz: () => void
+  answerQuestion: (answer: IAnswer) => void
+  completeQuiz: () => void
+  resetQuiz: () => void
+}
+
+interface QuizSelectors {
+  getCurrentQuestion: () => IQuestion | null
+  canGoNext: () => boolean
+  isAnswered: (questionIndex?: number) => boolean
+}
+
+interface QuizStore extends QuizActions, QuizSelectors {
+  quizState: IQuizState
+  result: IQuizResult | null
+  progress: IProgress
+}
+```
+
+## 참고 파일
+
+프로젝트의 주요 스토어는 [quizStore.ts](mdc:src/store/quizStore.ts)에 구현되어 있습니다. 새로운 스토어를 만들 때 이 파일을 참고하세요.

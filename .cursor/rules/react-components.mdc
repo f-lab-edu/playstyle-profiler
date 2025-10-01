@@ -1,0 +1,371 @@
+---
+globs: "*.tsx"
+description: "React 컴포넌트 작성 시 적용되는 규칙"
+---
+
+# React 컴포넌트 작성 규칙
+
+## 서버 vs 클라이언트 컴포넌트
+
+### 기본 원칙: 서버 컴포넌트 우선
+
+Next.js 15 App Router에서는 모든 컴포넌트가 기본적으로 서버 컴포넌트입니다.
+클라이언트 컴포넌트는 꼭 필요한 경우에만 사용합니다.
+
+```tsx
+// ✅ 서버 컴포넌트 (기본)
+// src/components/ProfileCard.tsx
+import type { IPlaystyleProfile } from '@/types'
+
+export function ProfileCard({ profile }: { profile: IPlaystyleProfile }) {
+  return (
+    <div>
+      <h2>{profile.title}</h2>
+      <p>{profile.description}</p>
+    </div>
+  )
+}
+
+// ✅ 클라이언트 컴포넌트 (필요시)
+// src/components/quiz/QuizContainer.tsx
+'use client'
+
+import { useState } from 'react'
+import { useQuizStore } from '@/store/quizStore'
+
+export function QuizContainer() {
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  const { currentQuestion } = useQuizStore()
+  
+  return <div>{/* 인터랙티브 UI */}</div>
+}
+```
+
+### 클라이언트 컴포넌트 사용 기준
+
+다음 경우에만 `'use client'` 지시어를 추가합니다:
+
+- ✅ React Hooks 사용 (useState, useEffect, useRef 등)
+- ✅ 이벤트 핸들러 (onClick, onChange 등)
+- ✅ 브라우저 API 사용 (window, localStorage, navigator 등)
+- ✅ 상태 관리 라이브러리 (Zustand, Context 등)
+- ✅ 애니메이션 라이브러리 (Framer Motion)
+
+상세한 내용은 [Next.js 패턴 규칙](mdc:.cursor/rules/nextjs-patterns.mdc)을 참조하세요.
+
+## 컴포넌트 구조
+
+### 함수형 컴포넌트 사용
+
+모든 컴포넌트는 함수형으로 작성합니다.
+
+```typescript
+// ✅ 올바른 함수형 컴포넌트
+interface IButtonProps {
+  onClick: () => void
+  children: React.ReactNode
+  variant?: 'primary' | 'secondary'
+  disabled?: boolean
+}
+
+export function Button({ 
+  onClick, 
+  children, 
+  variant = 'primary',
+  disabled = false 
+}: IButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`btn btn-${variant}`}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+### 컴포넌트 내부 순서
+
+컴포넌트는 다음 순서로 작성합니다:
+
+1. 인터페이스/타입 정의
+2. 컴포넌트 함수 선언
+3. Hooks (useState, useEffect 등)
+4. 이벤트 핸들러 함수
+5. 유틸리티 함수
+6. JSX 반환
+
+```typescript
+interface IQuestionCardProps {
+  question: IQuestion
+  onAnswer: (answer: IAnswer) => void
+}
+
+export function QuestionCard({ question, onAnswer }: IQuestionCardProps) {
+  // 1. Hooks
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  const { isAnswered } = useQuizStore()
+  
+  // 2. 이벤트 핸들러
+  const handleOptionSelect = (optionId: string) => {
+    setSelectedOption(optionId)
+    onAnswer({
+      questionId: question.id,
+      optionId,
+      timestamp: new Date()
+    })
+  }
+  
+  // 3. 유틸리티 함수
+  const isSelected = (optionId: string) => selectedOption === optionId
+  
+  // 4. JSX 반환
+  return (
+    <div className="question-card">
+      {/* ... */}
+    </div>
+  )
+}
+```
+
+## Hooks 사용 규칙
+
+### 커스텀 훅 작성
+
+재사용 가능한 로직은 커스텀 훅으로 분리합니다.
+
+```typescript
+// ✅ 커스텀 훅 예시
+export function useQuizProgress() {
+  const { progress, quizState } = useQuizStore()
+  
+  const isComplete = useMemo(() => 
+    progress.current === progress.total,
+    [progress]
+  )
+  
+  const percentageText = useMemo(() => 
+    `${progress.percentage}%`,
+    [progress.percentage]
+  )
+  
+  return {
+    progress,
+    isComplete,
+    percentageText
+  }
+}
+```
+
+### Hook 규칙 준수
+
+- 컴포넌트 최상위에서만 호출
+- 조건문/반복문 내부에서 호출 금지
+- 커스텀 훅은 `use` 접두사 사용
+
+## Props 전달
+
+### Props Drilling 방지
+
+깊은 props 전달은 Context나 상태 관리 라이브러리 사용을 고려합니다.
+
+```typescript
+// ✅ Zustand 스토어 활용
+export function QuizContainer() {
+  const { currentQuestion, answerQuestion } = useQuizStore()
+  
+  return <QuestionCard question={currentQuestion} onAnswer={answerQuestion} />
+}
+
+// ❌ Props Drilling
+export function App() {
+  const [state, setState] = useState()
+  return <Level1 state={state} setState={setState} />
+}
+
+function Level1({ state, setState }) {
+  return <Level2 state={state} setState={setState} />
+}
+// ... 계속 전달
+```
+
+### children 패턴 활용
+
+합성 컴포넌트 패턴을 활용합니다.
+
+```typescript
+// ✅ children 패턴
+export function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="card">
+      {children}
+    </div>
+  )
+}
+
+// 사용
+<Card>
+  <CardHeader>제목</CardHeader>
+  <CardBody>내용</CardBody>
+  <CardFooter>푸터</CardFooter>
+</Card>
+```
+
+## 성능 최적화
+
+### useMemo & useCallback
+
+불필요한 재계산과 리렌더링을 방지합니다.
+
+```typescript
+// ✅ 최적화된 컴포넌트
+export function ResultChart({ scores }: { scores: Record<MBTIDimension, number> }) {
+  // 값비싼 계산은 memoization
+  const chartData = useMemo(() => 
+    Object.entries(scores).map(([key, value]) => ({
+      label: key,
+      value: value * 10
+    })),
+    [scores]
+  )
+  
+  // 콜백 함수도 memoization
+  const handleClick = useCallback((dimension: MBTIDimension) => {
+    console.log(`Clicked ${dimension}`)
+  }, [])
+  
+  return <Chart data={chartData} onClick={handleClick} />
+}
+```
+
+### React.memo 활용
+
+props가 변경되지 않으면 리렌더링을 방지합니다.
+
+```typescript
+// ✅ memo 적용
+export const OptionButton = React.memo(function OptionButton({
+  option,
+  isSelected,
+  onSelect
+}: IOptionButtonProps) {
+  return (
+    <button
+      onClick={() => onSelect(option.id)}
+      className={isSelected ? 'selected' : ''}
+    >
+      {option.text}
+    </button>
+  )
+})
+```
+
+## 조건부 렌더링
+
+```typescript
+// ✅ 조건부 렌더링 패턴
+export function QuizStatus() {
+  const { quizState, result } = useQuizStore()
+  
+  // Early return 패턴
+  if (quizState.isCompleted && result) {
+    return <ResultPage result={result} />
+  }
+  
+  return (
+    <div>
+      {/* 논리 AND 연산자 */}
+      {quizState.currentQuestionIndex > 0 && (
+        <button onClick={previousQuestion}>이전</button>
+      )}
+      
+      {/* 삼항 연산자 */}
+      {isAnswered ? (
+        <button onClick={nextQuestion}>다음</button>
+      ) : (
+        <p>답변을 선택해주세요</p>
+      )}
+    </div>
+  )
+}
+```
+
+## 이벤트 핸들링
+
+```typescript
+// ✅ 이벤트 핸들러 네이밍
+export function QuizForm() {
+  // handle + 이벤트명 + 대상
+  const handleAnswerSubmit = (answer: IAnswer) => {
+    // ...
+  }
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // ...
+  }
+  
+  const handleButtonClick = () => {
+    // ...
+  }
+  
+  return (
+    <form onSubmit={handleAnswerSubmit}>
+      {/* ... */}
+    </form>
+  )
+}
+```
+
+## 접근성 (a11y)
+
+접근성을 고려한 컴포넌트를 작성합니다.
+
+```typescript
+// ✅ 접근성 고려
+export function QuestionCard({ question }: IQuestionCardProps) {
+  return (
+    <section 
+      role="region" 
+      aria-labelledby="question-title"
+    >
+      <h2 id="question-title">{question.question}</h2>
+      <div role="radiogroup" aria-label="답변 선택">
+        {question.options.map((option) => (
+          <button
+            key={option.id}
+            role="radio"
+            aria-checked={isSelected(option.id)}
+            onClick={() => handleSelect(option.id)}
+          >
+            {option.text}
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
+```
+
+## 에러 처리
+
+에러 바운더리와 함께 안전한 컴포넌트를 작성합니다.
+
+```typescript
+// ✅ 에러 처리
+export function QuizLoader() {
+  const [error, setError] = useState<Error | null>(null)
+  
+  if (error) {
+    return (
+      <div className="error-message">
+        <p>오류가 발생했습니다: {error.message}</p>
+        <button onClick={() => setError(null)}>다시 시도</button>
+      </div>
+    )
+  }
+  
+  return <Quiz />
+}
+```

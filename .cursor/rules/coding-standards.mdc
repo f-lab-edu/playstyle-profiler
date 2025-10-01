@@ -1,0 +1,152 @@
+---
+alwaysApply: true
+---
+
+# 코딩 표준 및 스타일 가이드
+
+## 언어 및 네이밍
+
+### 언어 사용 규칙
+- **커뮤니케이션**: 모든 대화와 설명은 **한국어**로 작성
+- **코드 주석**: 한국어로 작성하여 명확성 확보
+- **변수/함수명**: 영어 camelCase 사용
+- **타입/인터페이스명**: 영어 PascalCase 사용, 인터페이스는 `I` 접두사 사용
+
+### 예시
+```typescript
+// ✅ 올바른 예시
+interface IUserProfile {
+  userId: string
+  userName: string  // 영어 camelCase
+}
+
+// 사용자 정보를 가져오는 함수
+function getUserProfile(userId: string): IUserProfile {
+  // ...
+}
+
+// ❌ 잘못된 예시
+interface userprofile {  // PascalCase 사용 필요
+  user_id: string       // snake_case 지양
+  사용자이름: string     // 한글 변수명 지양
+}
+```
+
+## 코드 스타일
+
+### 함수형 프로그래밍 우선
+- 순수 함수 작성 지향
+- 불변성(Immutability) 유지
+- 고차 함수 활용 (map, filter, reduce 등)
+- 사이드 이펙트 최소화
+
+```typescript
+// ✅ 함수형 스타일
+const getAnsweredQuestions = (answers: IAnswer[]) => 
+  answers.filter(answer => answer.timestamp)
+
+// ❌ 명령형 스타일
+const getAnsweredQuestions = (answers: IAnswer[]) => {
+  const result = []
+  for (let i = 0; i < answers.length; i++) {
+    if (answers[i].timestamp) {
+      result.push(answers[i])
+    }
+  }
+  return result
+}
+```
+
+### TypeScript 엄격 모드
+- 명시적 타입 정의 필수
+- `any` 타입 사용 금지 (불가피한 경우 `unknown` 사용)
+- 모든 함수에 반환 타입 명시
+- null/undefined 체크 철저히
+
+```typescript
+// ✅ 좋은 예시
+function calculateScore(answers: IAnswer[]): number {
+  return answers.reduce((sum, answer) => sum + answer.score, 0)
+}
+
+// ❌ 나쁜 예시
+function calculateScore(answers: any) {  // any 사용 금지
+  return answers.reduce((sum, answer) => sum + answer.score, 0)  // 반환 타입 누락
+}
+```
+
+## 포맷팅
+
+### ESLint & Prettier
+- ESLint 규칙 준수 필수
+- Prettier 자동 포맷팅 적용
+- 저장 시 자동 포맷팅 권장
+
+### 기본 규칙
+- 들여쓰기: 2 spaces
+- 세미콜론: 사용하지 않음
+- 따옴표: 싱글 쿼트 사용
+- 줄 길이: 최대 100자
+- 후행 쉼표: 사용
+
+## React 컴포넌트
+
+### 서버 컴포넌트 우선 원칙
+- **기본**: 모든 컴포넌트는 서버 컴포넌트로 작성
+- **클라이언트 컴포넌트**: Hooks, 이벤트 핸들러, 브라우저 API 사용 시에만 `'use client'` 추가
+- **상세 규칙**: [nextjs-patterns.mdc](mdc:.cursor/rules/nextjs-patterns.mdc) 참조
+
+### 컴포넌트 작성 규칙
+- 함수형 컴포넌트 사용
+- Props는 인터페이스로 타입 정의
+- 컴포넌트는 하나의 책임만 가짐 (Single Responsibility)
+
+### UI 컴포넌트는 Shadcn UI 우선
+- 기본 UI 요소 (Button, Card, Input 등)는 Shadcn UI 사용
+- `src/components/ui/` 디렉토리에 위치
+- **상세 규칙**: [shadcn-ui.mdc](mdc:.cursor/rules/shadcn-ui.mdc) 참조
+
+```typescript
+// ✅ 올바른 컴포넌트 구조
+interface IQuestionCardProps {
+  question: IQuestion
+  onAnswer: (answer: IAnswer) => void
+  isAnswered: boolean
+}
+
+export function QuestionCard({ question, onAnswer, isAnswered }: IQuestionCardProps) {
+  // 컴포넌트 로직
+  return (
+    // JSX
+  )
+}
+```
+
+## 파일 구조
+
+### 파일 네이밍
+- 컴포넌트: PascalCase (예: `QuestionCard.tsx`)
+- 유틸리티: camelCase (예: `mbtiCalculator.ts`)
+- 훅: camelCase, `use` 접두사 (예: `useQuizProgress.ts`)
+- 타입: camelCase (예: `index.ts`)
+
+### Import 순서
+1. 외부 라이브러리
+2. Next.js 내장 모듈
+3. 절대 경로 import (@/)
+4. 상대 경로 import
+5. 타입 import
+
+```typescript
+// ✅ 올바른 import 순서
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+
+import { useQuizStore } from '@/store/quizStore'
+import { calculateScore } from '@/utils/mbtiCalculator'
+
+import { Button } from './Button'
+
+import type { IQuestion, IAnswer } from '@/types'
+```
