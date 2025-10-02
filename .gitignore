@@ -11,6 +11,8 @@ lerna-debug.log*
 .next
 # .cursor/*
 .cursorrules
+node_modules
+out
 
 
 node_modules

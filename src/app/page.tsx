@@ -45,7 +45,7 @@ export default function HomePage() {
             onClick={() => setIsStarted(true)}
             className="btn-primary text-xl px-8 py-4 w-full sm:w-auto"
           >
-            테스트 시작하기 🚀
+            테스트 시작하기
           </button>
           
           <p className="text-sm text-gray-500">

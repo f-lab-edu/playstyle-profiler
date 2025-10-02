@@ -117,7 +117,7 @@ export function saveQuizAnswers(answers: IAnswer[]): boolean {
 /**
  * 저장된 퀴즈 답변들을 가져옵니다
  */
-export function getQuizAnswers(): IAnswer[] {
+export function getQuizAnswers(): IAnswer[] | null {
   return LocalStorage.get<IAnswer[]>(STORAGE_KEYS.QUIZ_ANSWERS, [])
 }
 
@@ -160,7 +160,7 @@ export function saveUserPreferences(preferences: Record<string, any>): boolean {
 /**
  * 저장된 사용자 선호도를 가져옵니다
  */
-export function getUserPreferences(): Record<string, any> {
+export function getUserPreferences(): Record<string, any> | null {
   return LocalStorage.get<Record<string, any>>(STORAGE_KEYS.USER_PREFERENCES, {})
 }
 
