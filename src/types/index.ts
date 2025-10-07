@@ -132,3 +132,14 @@ export interface IRecommendation {
   tags: string[]
   relevanceScore: number
 }
+
+// Firestore 관련 타입 re-export
+export type {
+  IFirestoreDocument,
+  ITimestamps,
+  IQuizResult as IFirestoreQuizResult,
+  IUserProfile,
+  IStatistics,
+  IFirestoreQueryFilter,
+  IFirestoreQueryOptions,
+} from './firestore'

@@ -9,6 +9,9 @@
  *   import { Card } from '@/components/ui/card'
  */
 
+export { Badge, badgeVariants } from './badge'
+export type { IBadgeProps } from './badge'
+
 export { Button, buttonVariants } from './button'
 export type { IButtonProps } from './button'
 
