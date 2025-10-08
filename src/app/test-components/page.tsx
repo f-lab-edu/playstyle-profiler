@@ -13,6 +13,8 @@ import {
   Label,
   Progress,
 } from '@/components/ui'
+import { QuizProgress } from '@/components'
+import { useQuizStore } from '@/store/quizStore'
 
 /**
  * Shadcn UI 컴포넌트 테스트 페이지
@@ -25,6 +27,9 @@ import {
 export default function TestComponentsPage() {
   const [progress, setProgress] = useState<number>(33)
   const [inputValue, setInputValue] = useState<string>('')
+  
+  // QuizProgress 테스트를 위한 store 훅
+  const { nextQuestion, previousQuestion, quizState, startQuiz, resetQuiz } = useQuizStore()
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -36,6 +41,60 @@ export default function TestComponentsPage() {
             모든 컴포넌트가 정상적으로 작동하는지 확인해보세요
           </p>
         </div>
+
+        {/* QuizProgress 컴포넌트 테스트 */}
+        <Card>
+          <CardHeader>
+            <CardTitle>QuizProgress 컴포넌트</CardTitle>
+            <CardDescription>
+              퀴즈 진행률을 표시하는 커스텀 컴포넌트입니다
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-4">
+              <QuizProgress />
+              
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => startQuiz()}
+                  variant="outline"
+                >
+                  퀴즈 시작
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => previousQuestion()}
+                  disabled={quizState.currentQuestionIndex === 0}
+                >
+                  ← 이전
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => nextQuestion()}
+                >
+                  다음 →
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => resetQuiz()}
+                >
+                  초기화
+                </Button>
+              </div>
+
+              <div className="rounded-lg bg-muted p-4 text-sm space-y-2">
+                <p className="font-medium">현재 상태:</p>
+                <ul className="space-y-1 text-muted-foreground">
+                  <li>• 현재 질문 인덱스: {quizState.currentQuestionIndex}</li>
+                  <li>• 답변 개수: {quizState.answers.length}</li>
+                  <li>• 완료 여부: {quizState.isCompleted ? '완료' : '진행 중'}</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Button 컴포넌트 테스트 */}
         <Card>

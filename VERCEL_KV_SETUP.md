@@ -11,22 +11,9 @@ Firebase를 완전히 제거하고 Vercel KV로 교체했습니다!
 5. ✅ `src/app/api/stats/submit/route.ts` 생성 - 결과 제출 API
 6. ✅ `src/app/api/stats/route.ts` 생성 - 통계 조회 API
 
-## 🔧 남은 작업
+## 🔧 설정 시작
 
-### 1. Firebase 패키지 제거 (선택사항)
-
-```bash
-npm uninstall firebase
-```
-
-또는 `package.json`에서 직접 제거:
-```json
-"dependencies": {
-  "firebase": "^12.3.0",  // 이 줄 삭제
-}
-```
-
-그리고 `npm install` 실행
+Firebase 패키지는 이미 제거되었습니다!
 
 ---
 
