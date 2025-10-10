@@ -106,7 +106,8 @@ export function QuizScreen() {
     return undefined
   }, [quizState.isCompleted, router])
 
-  if (!currentQuestion) {
+  // Hydration이 완료될 때까지 로딩 표시
+  if (!hydrated || !currentQuestion) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-lg text-muted-foreground">질문을 불러오는 중...</p>

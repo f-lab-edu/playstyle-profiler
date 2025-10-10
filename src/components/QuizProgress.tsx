@@ -21,6 +21,7 @@ import { useQuizStore } from '@/store/quizStore'
 export function QuizProgress() {
   const { quizState, progress } = useQuizStore()
   const currentQuestionNumber = quizState.currentQuestionIndex + 1
+  const isFirstQuestion = quizState.currentQuestionIndex === 0
   
   return (
     <div className="w-full space-y-3">
@@ -28,10 +29,10 @@ export function QuizProgress() {
       <div className="flex items-center justify-between text-sm">
         {/* 현재 질문 번호 */}
         <motion.div 
-          key={currentQuestionNumber} // key를 사용해 숫자가 바뀔 때마다 애니메이션
-          initial={{ opacity: 0, y: -10 }}
+          key={currentQuestionNumber}
+          initial={isFirstQuestion ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: isFirstQuestion ? 0 : 0.3 }}
           className="font-medium text-muted-foreground"
         >
           질문 <span className="text-primary font-bold text-base">{currentQuestionNumber}</span>
@@ -40,11 +41,11 @@ export function QuizProgress() {
         
         {/* 진행률 퍼센트 */}
         <motion.div
-          key={progress.percentage} // 퍼센트가 바뀔 때마다 애니메이션
-          initial={{ opacity: 0, scale: 0.8 }}
+          key={progress.percentage}
+          initial={isFirstQuestion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ 
-            duration: 0.3,
+            duration: isFirstQuestion ? 0 : 0.3,
             type: 'spring',
             stiffness: 200
           }}
@@ -67,9 +68,9 @@ export function QuizProgress() {
 
       {/* 답변 완료 개수 (선택사항) */}
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={{ opacity: isFirstQuestion ? 1 : 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: isFirstQuestion ? 0 : 0.2 }}
         className="text-xs text-center text-muted-foreground"
       >
         {progress.current > 0 && (

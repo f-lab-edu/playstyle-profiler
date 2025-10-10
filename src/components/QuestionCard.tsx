@@ -141,15 +141,18 @@ export function QuestionCard({
     achievement: '성취 방식',
   }
 
+  // 첫 질문은 애니메이션 없이, 이후 질문만 애니메이션 적용
+  const isFirstQuestion = currentIndex === 0
+  
   return (
     <motion.div
-      key={question.id} // 질문이 바뀔 때마다 새로운 애니메이션 트리거
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      key={question.id}
+      initial={isFirstQuestion ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{
-        duration: 0.4,
-        ease: [0.4, 0, 0.2, 1], // 부드러운 cubic-bezier 이징
+        duration: isFirstQuestion ? 0 : 0.4,
+        ease: [0.4, 0, 0.2, 1],
       }}
       className="w-full"
     >
@@ -162,10 +165,10 @@ export function QuestionCard({
               {categoryLabels[question.category] || question.category}
             </Badge>
             <motion.span
-              key={currentIndex} // 번호가 바뀔 때마다 애니메이션
-              initial={{ scale: 0.8, opacity: 0 }}
+              key={currentIndex}
+              initial={isFirstQuestion ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: isFirstQuestion ? 0 : 0.1 }}
               className="text-sm font-medium text-muted-foreground"
             >
               {currentIndex + 1} / {totalQuestions}
@@ -190,11 +193,11 @@ export function QuestionCard({
           {question.options.map((option, index) => (
             <motion.div
               key={option.id}
-              initial={{ opacity: 0, x: -20 }}
+              initial={isFirstQuestion ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{
-                delay: index * 0.08, // 순차적으로 나타나는 효과
-                duration: 0.3,
+                delay: isFirstQuestion ? 0 : index * 0.08,
+                duration: isFirstQuestion ? 0 : 0.3,
               }}
             >
               <OptionButton

@@ -41,6 +41,7 @@ export function QuizNavigation({
   answeredCount,
 }: IQuizNavigationProps) {
   const isLastQuestion = currentIndex === totalQuestions - 1
+  const isFirstQuestion = currentIndex === 0
   
   // 다음 버튼 활성화 조건
   // - 마지막 질문: 현재 답변했으면 활성화 (완료하기)
@@ -49,9 +50,9 @@ export function QuizNavigation({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={isFirstQuestion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.4 }}
+      transition={{ delay: isFirstQuestion ? 0 : 0.3, duration: isFirstQuestion ? 0 : 0.4 }}
       className="space-y-4"
     >
       {/* 네비게이션 버튼들 */}
