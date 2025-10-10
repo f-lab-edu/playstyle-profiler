@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
 import { useQuizStore } from '@/store/quizStore'
@@ -25,6 +25,8 @@ import { QuizProgress } from './QuizProgress'
  */
 export function QuizScreen() {
   const router = useRouter()
+  const [hydrated, setHydrated] = useState(false)
+  
   const {
     quizState,
     getCurrentQuestion,
@@ -38,6 +40,12 @@ export function QuizScreen() {
   } = useQuizStore()
 
   const currentQuestion = getCurrentQuestion()
+
+  // skipHydration 사용 시 수동으로 hydration 실행
+  useEffect(() => {
+    useQuizStore.persist.rehydrate()
+    setHydrated(true)
+  }, [])
 
   // 현재 질문에 대한 답변 찾기
   const currentAnswer = quizState.answers.find(

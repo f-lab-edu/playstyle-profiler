@@ -265,6 +265,7 @@ export const useQuizStore = create<QuizStore>()(
       }),
       {
         name: 'playstyle-quiz-storage', // 로컬 스토리지 키
+        skipHydration: true, // Hydration 에러 방지
         partialize: (state) => ({
           // 결과와 답변만 저장 (UI 상태는 제외)
           result: state.result,

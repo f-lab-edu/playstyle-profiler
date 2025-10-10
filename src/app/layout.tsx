@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import { Header, Footer, ThemeProvider } from '@/components/layout'
 
@@ -23,16 +24,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <head>
-        {/* Kakao JavaScript SDK */}
-        <script
-          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
-          integrity="sha384-TiCUE00h+f9W8mR4aOCx1MRJ+Dn9Qg3EQ0HkLLJHJRAc8r7r/LsV0pq5hx6YJlx+"
-          crossOrigin="anonymous"
-          async
-        />
-      </head>
       <body className={inter.className}>
+        {/* Kakao JavaScript SDK */}
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+          strategy="afterInteractive"
+        />
+        
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
