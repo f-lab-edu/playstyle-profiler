@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useQuizStore } from '@/store/quizStore'
@@ -19,6 +19,7 @@ import { Sparkles, RotateCcw } from 'lucide-react'
 export default function ResultPage() {
   const router = useRouter()
   const { result, profile, resetQuiz, quizState } = useQuizStore()
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   // 퀴즈를 완료하지 않았으면 퀴즈 페이지로 리다이렉트
   useEffect(() => {
@@ -26,6 +27,35 @@ export default function ResultPage() {
       router.push('/quiz')
     }
   }, [quizState.isCompleted, result, router])
+
+  // 결과를 Vercel KV에 제출
+  useEffect(() => {
+    const submitResult = async () => {
+      // 이미 제출했거나 결과가 없으면 리턴
+      if (isSubmitted || !result) return
+
+      try {
+        const response = await fetch('/api/stats/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(result),
+        })
+
+        if (response.ok) {
+          setIsSubmitted(true)
+          console.log('결과가 성공적으로 제출되었습니다.')
+        } else {
+          console.error('결과 제출 실패:', await response.text())
+        }
+      } catch (error) {
+        console.error('결과 제출 중 오류:', error)
+      }
+    }
+
+    submitResult()
+  }, [result, isSubmitted])
 
   const handleRestart = () => {
     resetQuiz()

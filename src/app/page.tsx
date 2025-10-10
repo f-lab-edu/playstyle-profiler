@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Play, Clock, HelpCircle, Sparkles } from 'lucide-react'
+import { Play, Clock, HelpCircle, Sparkles, BarChart3 } from 'lucide-react'
 
 /**
  * 홈페이지 (랜딩 페이지)
@@ -17,6 +17,10 @@ export default function HomePage() {
 
   const handleStartQuiz = () => {
     router.push('/quiz')
+  }
+
+  const handleDashboard = () => {
+    router.push('/dashboard')
   }
 
   return (
@@ -50,15 +54,24 @@ export default function HomePage() {
               MBTI 성격 유형과 연결해드립니다
             </p>
 
-            {/* 시작 버튼 */}
+            {/* 버튼들 */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="pt-4"
+              className="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <Button
                 size="lg"
+                onClick={handleDashboard}
+                className="text-lg px-8 py-6 gap-2 shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <BarChart3 className="w-5 h-5" />
+                대시보드
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
                 onClick={handleStartQuiz}
                 className="text-lg px-8 py-6 gap-2 shadow-lg hover:shadow-xl transition-shadow"
               >
@@ -138,9 +151,16 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="pt-4 text-center">
+                <div className="pt-4 text-center flex gap-3 justify-center">
                   <Button
                     variant="outline"
+                    onClick={handleDashboard}
+                    className="gap-2"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    대시보드 보기
+                  </Button>
+                  <Button
                     onClick={handleStartQuiz}
                     className="gap-2"
                   >
@@ -156,3 +176,4 @@ export default function HomePage() {
     </div>
   )
 }
+

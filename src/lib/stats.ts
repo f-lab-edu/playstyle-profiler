@@ -24,9 +24,14 @@ export async function submitResult(result: IQuizResult): Promise<number> {
   await kv.lpush('recent-results', JSON.stringify({
     mbtiType: result.mbtiType,
     timestamp: new Date().toISOString(),
-    scores: result.scores
+    scores: result.scores,
+    completionTime: result.completionTime // 평균 계산용
   }))
   await kv.ltrim('recent-results', 0, 99) // 최신 100개만 유지
+  
+  // 완료 시간 통계 (평균 계산용, 최근 100개)
+  await kv.lpush('completion-times', result.completionTime)
+  await kv.ltrim('completion-times', 0, 99)
   
   return totalSubmissions
 }
@@ -134,5 +139,77 @@ export interface IRecentResult {
   mbtiType: MBTIType
   timestamp: string
   scores: Record<string, number>
+  completionTime?: number
+}
+
+/**
+ * 대시보드용 통계 (기존 getStats 확장)
+ */
+export interface IDashboardStats extends IStats {
+  topMBTI: MBTIType | null // 가장 인기 있는 유형
+  avgCompletionTime: number // 평균 완료 시간 (초)
+  recentResults: IRecentResult[] // 최근 결과
+}
+
+/**
+ * 대시보드 통계 조회 (전체 통계 + 추가 정보)
+ * 
+ * @returns 대시보드용 확장 통계
+ */
+export async function getDashboardStats(): Promise<IDashboardStats> {
+  const [mbtiCountsRaw, totalSubmissions, recentResultsRaw, completionTimesRaw] = await Promise.all([
+    kv.hgetall('mbti-counts'),
+    kv.get('total-submissions'),
+    kv.lrange('recent-results', 0, 9), // 최근 10개
+    kv.lrange('completion-times', 0, 99) // 최근 100개
+  ])
+  
+  const mbtiCounts = (mbtiCountsRaw as Record<string, number>) || {}
+  const total = (totalSubmissions as number) || 0
+  
+  // 각 MBTI 유형의 비율 계산 & 가장 인기 있는 유형 찾기
+  const percentages: Record<string, number> = {}
+  let topMBTI: MBTIType | null = null
+  let maxCount = 0
+  
+  for (const [type, count] of Object.entries(mbtiCounts)) {
+    percentages[type] = total > 0 ? Math.round((count / total) * 100 * 10) / 10 : 0
+    if (count > maxCount) {
+      maxCount = count
+      topMBTI = type as MBTIType
+    }
+  }
+  
+  // 최근 결과 파싱
+  const recentResults: IRecentResult[] = (recentResultsRaw as string[])
+    .map(item => {
+      try {
+        return JSON.parse(item)
+      } catch {
+        return null
+      }
+    })
+    .filter((item): item is IRecentResult => item !== null)
+  
+  // 평균 완료 시간 계산
+  const completionTimes = ((completionTimesRaw as string[]) || [])
+    .map(time => {
+      const parsed = parseInt(time, 10)
+      return isNaN(parsed) ? null : parsed
+    })
+    .filter((time): time is number => time !== null)
+  
+  const avgCompletionTime = completionTimes.length > 0
+    ? Math.round(completionTimes.reduce((sum, time) => sum + time, 0) / completionTimes.length)
+    : 0
+  
+  return {
+    mbtiCounts,
+    totalSubmissions: total,
+    percentages,
+    topMBTI,
+    avgCompletionTime,
+    recentResults
+  }
 }
 
