@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ThemeToggle } from './ThemeToggle'
 
 /**
@@ -14,7 +15,12 @@ export function Header() {
           href="/" 
           className="flex items-center gap-2 font-bold text-xl transition-colors hover:text-primary"
         >
-          <span className="text-2xl">🎮</span>
+           <Image 
+                src="/images/game-console-svgrepo-com.svg" 
+                alt="다크모드"
+                width={40}
+                height={20}
+              />
           <span className="hidden sm:inline">Playstyle Profiler</span>
           <span className="sm:hidden">PSP</span>
         </Link>

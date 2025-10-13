@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 /**
  * Footer 컴포넌트 (서버 컴포넌트)
@@ -13,7 +14,12 @@ export function Footer() {
         <div className="flex flex-col items-center justify-center gap-4 text-center">
           {/* 로고 */}
           <div className="flex items-center gap-2 text-lg font-semibold">
-            <span className="text-xl">🎮</span>
+              <Image 
+                src="/images/game-console-svgrepo-com.svg" 
+                alt="다크모드"
+                width={40}
+                height={20}
+              />
             <span>Playstyle Profiler</span>
           </div>
 

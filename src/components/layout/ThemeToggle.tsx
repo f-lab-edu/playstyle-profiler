@@ -3,7 +3,8 @@
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-
+import Image from 'next/image'
+ThemeToggle
 /**
  * ThemeToggle 컴포넌트 (클라이언트 컴포넌트)
  * 다크모드와 라이트모드를 전환하는 버튼입니다.
@@ -42,10 +43,20 @@ export function ThemeToggle() {
       aria-label="테마 전환"
     >
       {theme === 'dark' ? (
-        <span className="text-xl">🌙</span>
-      ) : (
-        <span className="text-xl">☀️</span>
-      )}
+  <Image 
+    src="/images/sun-moon.svg" 
+    alt="다크모드"
+    width={40}
+    height={20}
+  />
+) : (
+  <Image 
+    src="/images/icons8-태양.svg" 
+    alt="라이트모드"
+    width={40}
+    height={20}
+  />
+)}
     </Button>
   )
 }
