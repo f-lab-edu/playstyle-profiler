@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ShareButtons } from '@/components/ShareButtons'
 import { Sparkles, RotateCcw } from 'lucide-react'
+import { submitQuizResult } from '@/actions/submit'
 
 /**
  * 결과 페이지
@@ -35,19 +36,13 @@ export default function ResultPage() {
       if (isSubmitted || !result) return
 
       try {
-        const response = await fetch('/api/stats/submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(result),
-        })
+        const response = await submitQuizResult(result)
 
-        if (response.ok) {
+        if (response.success) {
           setIsSubmitted(true)
           console.log('결과가 성공적으로 제출되었습니다.')
         } else {
-          console.error('결과 제출 실패:', await response.text())
+          console.error('결과 제출 실패:', response.error)
         }
       } catch (error) {
         console.error('결과 제출 중 오류:', error)
