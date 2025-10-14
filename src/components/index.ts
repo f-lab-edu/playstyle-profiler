@@ -11,8 +11,5 @@ export { QuizNavigation } from './QuizNavigation'
 export { QuizScreen } from './QuizScreen'
 export { ShareButtons } from './ShareButtons'
 
-// 통계 및 표시 컴포넌트
-export { StatsDisplay } from './StatsDisplay'
-
 // UI 컴포넌트 (Shadcn UI)
 export * from './ui'
