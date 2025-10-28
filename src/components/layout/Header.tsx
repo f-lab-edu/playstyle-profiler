@@ -4,7 +4,7 @@ import { ThemeToggle } from './ThemeToggle'
 
 /**
  * Header 컴포넌트 (서버 컴포넌트)
- * 로고와 다크모드 토글 버튼을 포함합니다.
+ * 로고와 다크모드h 토글 버튼을 포함합니다.
  */
 export function Header() {
   return (

@@ -70,7 +70,7 @@ export function ShareButtons({ mbtiType, profileTitle }: IShareButtonsProps) {
       window.Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: '🎮 플레이스타일 MBTI 결과',
+          title: ' 플레이스타일 MBTI 결과',
           description: `나는 ${mbtiType} - ${profileTitle}!\n당신의 플레이스타일도 알아보세요!`,
           imageUrl: window.location.origin + '/og-image.png',
           link: {

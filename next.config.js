@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'export', // 개발 중에는 주석 처리 (routes-manifest 에러 방지)
+  output: process.env.NODE_ENV === 'development' ? undefined : 'export',
   trailingSlash: true,
   images: {
     unoptimized: true

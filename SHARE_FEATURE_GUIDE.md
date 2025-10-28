@@ -61,7 +61,7 @@ window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY)
 window.Kakao.Share.sendDefault({
   objectType: 'feed',
   content: {
-    title: '🎮 플레이스타일 MBTI 결과',
+    title: ' 플레이스타일 MBTI 결과',
     description: `나는 ${mbtiType} - ${profileTitle}!`,
     imageUrl: window.location.origin + '/og-image.png',
     link: {
