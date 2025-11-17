@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "notion:test": "node scripts/test-connection.js",
+    "notion:update": "node scripts/update-portfolio.js"
   },
   "dependencies": {
     "@next/eslint-plugin-next": "^15.5.2",
@@ -35,7 +37,9 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.0",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
+    "eslint-config-next": "^16.0.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
