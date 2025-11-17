@@ -12,6 +12,10 @@
 import { fetchDashboardStats } from '@/actions/stats'
 import { DashboardClient } from './DashboardClient'
 
+// 동적 렌더링 강제 (빌드 타임 정적 생성 비활성화)
+// Upstash Redis 연결은 빌드 타임에 불가능하므로 런타임에만 렌더링
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   // 서버에서 직접 데이터 조회 (API 불필요!)
   const stats = await fetchDashboardStats()
