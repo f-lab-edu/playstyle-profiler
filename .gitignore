@@ -13,6 +13,7 @@ lerna-debug.log*
 .cursorrules
 node_modules
 out
+.cursor/rules
 
 
 node_modules
@@ -38,7 +39,7 @@ dist-ssr
 .env.test.local
 .env.production.local
 
-# Notion scripts (하드코딩된 토큰이 있는 레거시 파일들)
+# Notion scripts 
 update-notion-final.js
 test-notion.js
 add-seo-server-actions.js
