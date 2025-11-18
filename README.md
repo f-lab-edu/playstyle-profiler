@@ -71,19 +71,22 @@
 
 ### 퀴즈 페이지
 
-![퀴즈 페이지 스크린샷](이미지_경로_추가_예정)
+<img width="894" height="729" alt="image" src="https://github.com/user-attachments/assets/a2ef73a9-b5d8-4ebe-8bc4-b6cee29739f0" />
+
 
 > 16개 질문 진행, 실시간 진행률 표시, 네비게이션
 
 ### 결과 페이지
 
-![결과 페이지 스크린샷](이미지_경로_추가_예정)
+<img width="664" height="883" alt="image" src="https://github.com/user-attachments/assets/4b66fcf0-8c02-41f9-be56-713415ccb6c9" />
+
 
 > MBTI 유형 표시, 상세 분석, 강점/약점, 맞춤형 추천
 
 ### 대시보드
 
-![대시보드 스크린샷](이미지_경로_추가_예정)
+<img width="1144" height="804" alt="image" src="https://github.com/user-attachments/assets/152d9f40-41b5-4bf6-b33d-11c49f3c9e7c" />
+
 
 > 통계 데이터 시각화, 유형별 분포 차트
 
