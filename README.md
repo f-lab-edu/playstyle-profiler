@@ -69,12 +69,16 @@
 
 > 프로젝트 소개 및 퀴즈 시작, 대시보드 링크 제공
 
+
+
 ### 퀴즈 페이지
 
 <img width="894" height="729" alt="image" src="https://github.com/user-attachments/assets/a2ef73a9-b5d8-4ebe-8bc4-b6cee29739f0" />
 
 
 > 16개 질문 진행, 실시간 진행률 표시, 네비게이션
+
+
 
 ### 결과 페이지
 
@@ -83,12 +87,16 @@
 
 > MBTI 유형 표시, 상세 분석, 강점/약점, 맞춤형 추천
 
+
+
 ### 대시보드
 
 <img width="1144" height="804" alt="image" src="https://github.com/user-attachments/assets/152d9f40-41b5-4bf6-b33d-11c49f3c9e7c" />
 
 
 > 통계 데이터 시각화, 유형별 분포 차트
+
+
 
 ---
 
