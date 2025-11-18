@@ -65,7 +65,8 @@
 
 ### 메인 페이지
 
-![메인 페이지 스크린샷](이미지_경로_추가_예정)
+<img width="1222" height="993" alt="image" src="https://github.com/user-attachments/assets/11e4a22f-2619-4a72-bcfd-eb8cd5cf5f89" />
+
 
 > 프로젝트 소개 및 퀴즈 시작, 대시보드 링크 제공
 
