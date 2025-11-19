@@ -1,10 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 
-/**
- * Footer 컴포넌트 (서버 컴포넌트)
- * 저작권 정보 및 추가 링크를 포함합니다.
- */
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
@@ -37,12 +33,15 @@ export function Footer() {
             >
               테스트하기
             </Link>
+            
+            {/*
+            todo: 소개 페이지 추가
             <Link 
               href="/about" 
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               소개
-            </Link>
+            </Link> */}
           </div>
 
           {/* 저작권 */}

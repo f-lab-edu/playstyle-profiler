@@ -7,11 +7,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Play, Clock, HelpCircle, Sparkles, BarChart3 } from 'lucide-react'
 
-/**
- * 홈페이지 (랜딩 페이지)
- * 
- * 퀴즈 소개 및 시작 버튼을 제공하는 메인 페이지입니다.
- */
 export default function HomePage() {
   const router = useRouter()
 

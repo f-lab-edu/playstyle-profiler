@@ -1,7 +1,6 @@
 import { IPlaystyleProfile, MBTIType } from '../types'
 
 export const PLAYSTYLE_PROFILES: Record<MBTIType, IPlaystyleProfile> = {
-  // 분석가 그룹 (NT)
   INTJ: {
     mbtiType: 'INTJ',
     title: '마스터 전략가',
@@ -178,7 +177,6 @@ export const PLAYSTYLE_PROFILES: Record<MBTIType, IPlaystyleProfile> = {
     ]
   },
 
-  // 외교관 그룹 (NF)
   INFJ: {
     mbtiType: 'INFJ',
     title: '전략적 수호자',
@@ -355,7 +353,6 @@ export const PLAYSTYLE_PROFILES: Record<MBTIType, IPlaystyleProfile> = {
     ]
   },
 
-  // 관리자 그룹 (SJ)
   ISTJ: {
     mbtiType: 'ISTJ',
     title: '신뢰할 수 있는 수비수',
@@ -532,7 +529,6 @@ export const PLAYSTYLE_PROFILES: Record<MBTIType, IPlaystyleProfile> = {
     ]
   },
 
-  // 탐험가 그룹 (SP)
   ISTP: {
     mbtiType: 'ISTP',
     title: '냉정한 문제 해결사',

@@ -12,24 +12,10 @@ interface IShareButtonsProps {
   profileTitle: string
 }
 
-/**
- * ShareButtons 컴포넌트
- * 
- * 왜 이렇게 만들었나요?
- * - 결과를 다양한 방법으로 공유할 수 있도록 지원
- * - URL 복사: 클립보드 API 사용
- * - 카카오톡 공유: Kakao JavaScript SDK 사용
- * 
- * 주요 기능:
- * - URL 복사 (클립보드)
- * - 카카오톡 공유 (메시지 API)
- * - 복사 완료 피드백 애니메이션
- */
 export function ShareButtons({ mbtiType, profileTitle }: IShareButtonsProps) {
   const [isCopied, setIsCopied] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
 
-  // URL 복사 핸들러
   const handleCopyUrl = async () => {
     try {
       const url = window.location.origin + `/result?type=${mbtiType}`
@@ -37,7 +23,6 @@ export function ShareButtons({ mbtiType, profileTitle }: IShareButtonsProps) {
       
       setIsCopied(true)
       
-      // 2초 후 복사 완료 메시지 숨기기
       setTimeout(() => {
         setIsCopied(false)
       }, 2000)
@@ -47,26 +32,21 @@ export function ShareButtons({ mbtiType, profileTitle }: IShareButtonsProps) {
     }
   }
 
-  // 카카오톡 공유 핸들러
   const handleKakaoShare = () => {
     if (typeof window === 'undefined') return
 
     try {
-      // Kakao SDK가 로드되었는지 확인
       if (!window.Kakao) {
         alert('카카오톡 공유 기능을 사용할 수 없습니다.')
         return
       }
 
-      // 이미 초기화되어 있으면 cleanup
       if (window.Kakao.isInitialized()) {
         window.Kakao.cleanup()
       }
 
-      // Kakao SDK 초기화
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY || '')
 
-      // 카카오톡 공유하기
       window.Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {

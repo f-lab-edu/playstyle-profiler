@@ -4,20 +4,6 @@ import { motion } from 'framer-motion'
 import { Progress } from '@/components/ui'
 import { useQuizStore } from '@/store/quizStore'
 
-/**
- * QuizProgress 컴포넌트
- * 
- * 퀴즈 진행률을 시각적으로 표시하는 컴포넌트입니다.
- * 
- * 주요 기능:
- * 1. 현재 질문 번호 표시 (예: "1 / 16")
- * 2. 전체 진행률 퍼센트 표시
- * 3. Progress 바로 시각적 진행 상황 표시
- * 4. 부드러운 애니메이션 효과
- * 
- * Zustand Store에서 진행률 정보를 가져와 표시합니다.
- */
-
 export function QuizProgress() {
   const { quizState, progress } = useQuizStore()
   const currentQuestionNumber = quizState.currentQuestionIndex + 1

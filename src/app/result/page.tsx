@@ -13,22 +13,16 @@ import { submitQuizResult } from '@/actions/submit'
 import { PLAYSTYLE_PROFILES } from '@/data/profiles'
 import type { MBTIType, IQuizResult, IPlaystyleProfile } from '@/types'
 
-/**
- * 결과 페이지 내부 컴포넌트 (useSearchParams 사용)
- */
 function ResultPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { result: storeResult, profile: storeProfile, resetQuiz, quizState } = useQuizStore()
-  const hasSubmittedRef = useRef(false) // 중복 제출 방지용 ref
+  const hasSubmittedRef = useRef(false)
 
-  // URL 쿼리 파라미터에서 MBTI 타입 읽기
   const mbtiTypeFromUrl = searchParams.get('type') as MBTIType | null
 
-  // URL 파라미터가 있으면 해당 MBTI 결과 표시, 없으면 store에서 가져오기
   const result: IQuizResult | null = useMemo(() => {
     if (mbtiTypeFromUrl && PLAYSTYLE_PROFILES[mbtiTypeFromUrl]) {
-      // URL 파라미터로 공유된 경우: 기본 결과 객체 생성
       return {
         mbtiType: mbtiTypeFromUrl,
         scores: {
@@ -66,23 +60,18 @@ function ResultPageContent() {
     return storeProfile
   }, [mbtiTypeFromUrl, storeProfile])
 
-  // URL 파라미터가 없는 경우에만 퀴즈 완료 여부 확인
   useEffect(() => {
     if (!mbtiTypeFromUrl && (!quizState.isCompleted || !storeResult)) {
       router.push('/quiz')
     }
   }, [mbtiTypeFromUrl, quizState.isCompleted, storeResult, router])
 
-  // 결과를 Vercel KV에 제출 (한 번만 실행, URL 파라미터로 공유된 경우는 제출하지 않음)
   useEffect(() => {
-    // URL 파라미터로 공유된 경우는 제출하지 않음
     if (mbtiTypeFromUrl) return
     
-    // 이미 제출했거나 결과가 없으면 리턴
     if (hasSubmittedRef.current || !storeResult) return
 
     const submitResult = async () => {
-      // 중복 제출 방지
       if (hasSubmittedRef.current) return
       hasSubmittedRef.current = true
 
@@ -93,19 +82,17 @@ function ResultPageContent() {
           console.log('결과가 성공적으로 제출되었습니다.')
         } else {
           console.error('결과 제출 실패:', response.error)
-          // 실패 시 다시 시도할 수 있도록 플래그 리셋
           hasSubmittedRef.current = false
         }
       } catch (error) {
         console.error('결과 제출 중 오류:', error)
-        // 에러 발생 시 다시 시도할 수 있도록 플래그 리셋
         hasSubmittedRef.current = false
       }
     }
 
     submitResult()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mbtiTypeFromUrl, storeResult]) // mbtiTypeFromUrl과 storeResult를 dependency로 사용
+  }, [mbtiTypeFromUrl, storeResult])
 
   const handleRestart = () => {
     resetQuiz()
@@ -292,13 +279,6 @@ function ResultPageContent() {
   )
 }
 
-/**
- * 결과 페이지
- * 
- * 퀴즈 완료 후 MBTI 결과를 표시하는 페이지입니다.
- * URL 쿼리 파라미터 `type`을 통해 특정 MBTI 결과를 공유할 수 있습니다.
- * 예: /result?type=INTJ
- */
 export default function ResultPage() {
   return (
     <Suspense fallback={

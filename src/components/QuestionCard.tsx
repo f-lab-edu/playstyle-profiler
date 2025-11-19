@@ -21,9 +21,6 @@ interface IOptionButtonProps {
   onSelect: () => void
 }
 
-/**
- * OptionButton 컴포넌트 (인라인)
- */
 function OptionButton({ option, isSelected, onSelect }: IOptionButtonProps) {
   return (
     <motion.button
@@ -110,20 +107,6 @@ function OptionButton({ option, isSelected, onSelect }: IOptionButtonProps) {
   )
 }
 
-/**
- * QuestionCard 컴포넌트
- * 
- * 왜 이렇게 만들었나요?
- * - 질문과 선택지를 한 카드에 모아서 표시하여 집중도 향상
- * - Framer Motion으로 부드러운 전환 효과 제공
- * - 카테고리 배지로 질문 유형을 시각적으로 구분
- * 
- * 사용된 Framer Motion 기능:
- * - initial: 컴포넌트가 처음 나타날 때의 상태
- * - animate: 목표 애니메이션 상태
- * - exit: 컴포넌트가 사라질 때의 상태
- * - transition: 애니메이션의 지속 시간과 이징 함수
- */
 export function QuestionCard({
   question,
   currentIndex,
@@ -131,7 +114,6 @@ export function QuestionCard({
   selectedOptionId,
   onSelect,
 }: IQuestionCardProps) {
-  // 카테고리 한글 라벨 매핑
   const categoryLabels: Record<string, string> = {
     gameplay_style: '게임플레이 스타일',
     team_play: '팀플레이',
@@ -141,7 +123,6 @@ export function QuestionCard({
     achievement: '성취 방식',
   }
 
-  // 첫 질문은 애니메이션 없이, 이후 질문만 애니메이션 적용
   const isFirstQuestion = currentIndex === 0
   
   return (

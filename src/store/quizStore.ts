@@ -13,13 +13,11 @@ import { PLAYSTYLE_PROFILES } from '@/data/profiles'
 import { calculateQuizResult } from '@/utils/mbtiCalculator'
 
 interface QuizStore {
-  // 상태
   quizState: IQuizState
   result: IQuizResult | null
   profile: IPlaystyleProfile | null
   progress: IProgress
   
-  // 액션들
   startQuiz: () => void
   answerQuestion: (answer: IAnswer) => void
   nextQuestion: () => void
@@ -28,7 +26,6 @@ interface QuizStore {
   completeQuiz: () => void
   resetQuiz: () => void
   
-  // 유틸리티 함수들
   getCurrentQuestion: () => typeof QUIZ_QUESTIONS[0] | null
   getProgress: () => IProgress
   canGoNext: () => boolean
@@ -61,13 +58,11 @@ export const useQuizStore = create<QuizStore>()(
   devtools(
     persist(
       (set, get) => ({
-        // 초기 상태
         quizState: initialQuizState,
         result: null,
         profile: null,
         progress: initialProgress,
 
-        // 퀴즈 시작
         startQuiz: () => {
           set({
             quizState: {
@@ -80,7 +75,6 @@ export const useQuizStore = create<QuizStore>()(
           })
         },
 
-        // 질문 답변
         answerQuestion: (answer: IAnswer) => {
           const state = get()
           const existingAnswerIndex = state.quizState.answers.findIndex(
@@ -89,11 +83,9 @@ export const useQuizStore = create<QuizStore>()(
 
           let newAnswers
           if (existingAnswerIndex >= 0) {
-            // 기존 답변 수정
             newAnswers = [...state.quizState.answers]
             newAnswers[existingAnswerIndex] = answer
           } else {
-            // 새 답변 추가
             newAnswers = [...state.quizState.answers, answer]
           }
 
@@ -112,7 +104,6 @@ export const useQuizStore = create<QuizStore>()(
           })
         },
 
-        // 다음 질문으로
         nextQuestion: () => {
           const state = get()
           const nextIndex = Math.min(
@@ -127,14 +118,12 @@ export const useQuizStore = create<QuizStore>()(
             }
           })
 
-          // 마지막 질문이고 답변이 완료되었으면 자동 완료
           if (nextIndex === QUIZ_QUESTIONS.length - 1 && 
               state.quizState.answers.length === QUIZ_QUESTIONS.length) {
             setTimeout(() => get().completeQuiz(), 500)
           }
         },
 
-        // 이전 질문으로
         previousQuestion: () => {
           const state = get()
           const prevIndex = Math.max(state.quizState.currentQuestionIndex - 1, 0)
@@ -147,7 +136,6 @@ export const useQuizStore = create<QuizStore>()(
           })
         },
 
-        // 특정 질문으로 이동
         goToQuestion: (index: number) => {
           const validIndex = Math.max(0, Math.min(index, QUIZ_QUESTIONS.length - 1))
           
@@ -159,7 +147,6 @@ export const useQuizStore = create<QuizStore>()(
           }))
         },
 
-        // 퀴즈 완료
         completeQuiz: () => {
           const state = get()
           
@@ -194,7 +181,6 @@ export const useQuizStore = create<QuizStore>()(
           })
         },
 
-        // 퀴즈 초기화
         resetQuiz: () => {
           set({
             quizState: initialQuizState,
@@ -204,18 +190,15 @@ export const useQuizStore = create<QuizStore>()(
           })
         },
 
-        // 현재 질문 가져오기
         getCurrentQuestion: () => {
           const state = get()
           return QUIZ_QUESTIONS[state.quizState.currentQuestionIndex] || null
         },
 
-        // 진행률 계산
         getProgress: () => {
           const state = get()
           const answeredCount = state.quizState.answers.length
           
-          // 카테고리별 진행률 계산
           const categoryProgress: Record<QuestionCategory, number> = {
             gameplay_style: 0,
             team_play: 0,
@@ -240,19 +223,16 @@ export const useQuizStore = create<QuizStore>()(
           }
         },
 
-        // 다음으로 갈 수 있는지 확인
         canGoNext: () => {
           const state = get()
           return state.quizState.currentQuestionIndex < QUIZ_QUESTIONS.length - 1
         },
 
-        // 이전으로 갈 수 있는지 확인
         canGoPrevious: () => {
           const state = get()
           return state.quizState.currentQuestionIndex > 0
         },
 
-        // 답변 여부 확인
         isAnswered: (questionIndex?: number) => {
           const state = get()
           const index = questionIndex ?? state.quizState.currentQuestionIndex
@@ -264,10 +244,9 @@ export const useQuizStore = create<QuizStore>()(
         }
       }),
       {
-        name: 'playstyle-quiz-storage', // 로컬 스토리지 키
-        skipHydration: true, // Hydration 에러 방지
+        name: 'playstyle-quiz-storage',
+        skipHydration: true,
         partialize: (state) => ({
-          // 결과와 답변만 저장 (UI 상태는 제외)
           result: state.result,
           profile: state.profile,
           quizState: {

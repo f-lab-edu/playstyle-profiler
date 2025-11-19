@@ -2,10 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ThemeToggle } from './ThemeToggle'
 
-/**
- * Header 컴포넌트 (서버 컴포넌트)
- * 로고와 다크모드h 토글 버튼을 포함합니다.
- */
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

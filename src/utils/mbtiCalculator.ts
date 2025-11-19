@@ -1,8 +1,5 @@
 import { IAnswer, IQuestion, IQuizResult, MBTIDimension, MBTIType } from '../types'
 
-/**
- * 답변들을 바탕으로 MBTI 점수를 계산합니다
- */
 export function calculateMBTIScores(
   answers: IAnswer[],
   questions: IQuestion[]
@@ -29,9 +26,6 @@ export function calculateMBTIScores(
   return scores
 }
 
-/**
- * MBTI 점수를 백분율로 변환합니다
- */
 export function calculatePercentages(
   scores: Record<MBTIDimension, number>
 ): Record<MBTIDimension, number> {
@@ -63,9 +57,6 @@ export function calculatePercentages(
   }
 }
 
-/**
- * 점수를 바탕으로 MBTI 타입을 결정합니다
- */
 export function determineMBTIType(scores: Record<MBTIDimension, number>): MBTIType {
   const ei = scores.E > scores.I ? 'E' : 'I'
   const sn = scores.S > scores.N ? 'S' : 'N'
@@ -75,9 +66,6 @@ export function determineMBTIType(scores: Record<MBTIDimension, number>): MBTITy
   return (ei + sn + tf + jp) as MBTIType
 }
 
-/**
- * 지배적인 특성들을 찾습니다 (가장 높은 점수를 가진 차원들)
- */
 export function findDominantTraits(
   scores: Record<MBTIDimension, number>
 ): MBTIDimension[] {
@@ -93,9 +81,6 @@ export function findDominantTraits(
     .map(pair => pair.higher as MBTIDimension)
 }
 
-/**
- * 전체 퀴즈 결과를 계산합니다
- */
 export function calculateQuizResult(
   answers: IAnswer[],
   questions: IQuestion[],
@@ -118,9 +103,6 @@ export function calculateQuizResult(
   }
 }
 
-/**
- * MBTI 타입 검증 함수
- */
 export function isValidMBTIType(type: string): type is MBTIType {
   const validTypes: MBTIType[] = [
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
@@ -131,9 +113,6 @@ export function isValidMBTIType(type: string): type is MBTIType {
   return validTypes.includes(type as MBTIType)
 }
 
-/**
- * 두 MBTI 타입의 호환성을 계산합니다 (0-100%)
- */
 export function calculateCompatibility(type1: MBTIType, type2: MBTIType): number {
   if (type1 === type2) return 100
 
@@ -142,27 +121,25 @@ export function calculateCompatibility(type1: MBTIType, type2: MBTIType): number
 
   let compatibility = 0
   
-  // 각 차원별 호환성 계산
   for (let i = 0; i < 4; i++) {
     if (chars1[i] === chars2[i]) {
-      compatibility += 25 // 같은 차원이면 25% 추가
+      compatibility += 25
     } else {
-      // 보완적 관계인 경우 부분 점수
       if ((chars1[i] === 'E' && chars2[i] === 'I') || 
           (chars1[i] === 'I' && chars2[i] === 'E')) {
-        compatibility += 15 // E-I 보완
+        compatibility += 15
       }
       if ((chars1[i] === 'S' && chars2[i] === 'N') || 
           (chars1[i] === 'N' && chars2[i] === 'S')) {
-        compatibility += 10 // S-N 보완
+        compatibility += 10
       }
       if ((chars1[i] === 'T' && chars2[i] === 'F') || 
           (chars1[i] === 'F' && chars2[i] === 'T')) {
-        compatibility += 15 // T-F 보완
+        compatibility += 15
       }
       if ((chars1[i] === 'J' && chars2[i] === 'P') || 
           (chars1[i] === 'P' && chars2[i] === 'J')) {
-        compatibility += 10 // J-P 보완
+        compatibility += 10
       }
     }
   }

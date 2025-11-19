@@ -16,20 +16,6 @@ interface IQuizNavigationProps {
   answeredCount: number
 }
 
-/**
- * QuizNavigation 컴포넌트
- * 
- * 왜 이렇게 만들었나요?
- * - 퀴즈 진행을 위한 네비게이션 UI를 분리하여 관심사 분리
- * - 버튼 비활성화 조건을 명확하게 표현
- * - 진행 상태를 시각적으로 피드백
- * 
- * 주요 기능:
- * - 이전/다음 버튼 제공
- * - 답변 여부에 따른 다음 버튼 활성화/비활성화
- * - 첫/마지막 질문에서 적절한 버튼 비활성화
- * - 답변 상태 표시
- */
 export function QuizNavigation({
   canGoPrevious,
   canGoNext,
@@ -43,9 +29,6 @@ export function QuizNavigation({
   const isLastQuestion = currentIndex === totalQuestions - 1
   const isFirstQuestion = currentIndex === 0
   
-  // 다음 버튼 활성화 조건
-  // - 마지막 질문: 현재 답변했으면 활성화 (완료하기)
-  // - 그 외: 답변했고 && 다음 질문이 있으면 활성화
   const canProceedNext = isLastQuestion ? isAnswered : (isAnswered && canGoNext)
 
   return (

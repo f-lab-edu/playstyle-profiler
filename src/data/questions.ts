@@ -1,7 +1,6 @@
 import { IQuestion, QuestionCategory } from '../types'
 
 export const QUIZ_QUESTIONS: IQuestion[] = [
-  // 게임플레이 스타일 관련 질문들
   {
     id: 'q1',
     question: '새로운 게임을 시작할 때 당신의 첫 번째 행동은?',
@@ -321,7 +320,6 @@ export const QUIZ_QUESTIONS: IQuestion[] = [
   }
 ]
 
-// 카테고리별 질문 개수 확인용
 export const QUESTIONS_BY_CATEGORY = QUIZ_QUESTIONS.reduce((acc, question) => {
   acc[question.category] = (acc[question.category] || 0) + 1
   return acc

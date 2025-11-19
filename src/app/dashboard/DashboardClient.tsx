@@ -1,10 +1,3 @@
-/**
- * 대시보드 클라이언트 컴포넌트
- * 
- * 애니메이션과 인터랙션이 필요한 부분을 Client Component로 분리했습니다.
- * Server Component(page.tsx)에서 데이터를 받아서 렌더링합니다.
- */
-
 'use client'
 
 import { motion } from 'framer-motion'
@@ -22,7 +15,6 @@ interface IDashboardClientProps {
 }
 
 export function DashboardClient({ stats }: IDashboardClientProps) {
-  // 시간 포맷팅
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60)
     const secs = seconds % 60
